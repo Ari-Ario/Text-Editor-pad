@@ -186,13 +186,15 @@ def open_new_win():
         
 
 #code of the main window
-win = Tk()
-win.title("Text Editor")
+root = Tk()
+root.title("Text Editor")
+win= LabelFrame(root)
+win.pack(side=LEFT, fill=BOTH, expand=True)
 win.rowconfigure([0,1,2,3,4,5,6,7,8,9], weight=1, minsize=1)
 win.columnconfigure([0,1,2], weight=1, minsize=5)
 
 menubar = Menu(win)
-win.config(menu=menubar)
+root.config(menu=menubar)
 
 file = Menu(menubar, activebackground="cyan", tearoff=0)
 menubar.add_cascade(menu=file, label="FILE")
@@ -278,7 +280,7 @@ button_exit=Button(win, text="Exit            ", relief=RAISED, command=win.dest
 button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
 
 #function of popup with right-click on text_box
-def do_popup(event):
+def do_popup(self, event):
     try:
         menu_popup.tk_popup(event.x_root, event.y_root, 0)
     finally:
@@ -374,24 +376,29 @@ def creat_img():
     #img.save("sth"+".png" , "PNG")
 
 #all labels, buttons and scales on the pad
-label_canvas = Label(win, text="Write or paint on the pad", font="Currier")
-label_canvas.grid(row=0, column=3, sticky=S)
-c = Canvas(win, bg="light cyan", height=550, width=300)
-c.grid(row=1, column=3, rowspan=7, sticky=N)
-label_import_img= Button(win, text="Save Photo", relief=RAISED, command=creat_img())
-label_import_img.grid(row=8, column=3, sticky=W)
-label_control = Label(win, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
-label_control.grid(row=8, column=3)
-scale_control = ttk.Scale(win, from_=5, to=100,  command= brush_size_change)
-scale_control.set(brush_width)
-scale_control.grid(row=8, column=3, sticky=E)
+frame_canvas= LabelFrame(root, text= "Write or paint on the pad")
+frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
+#label_canvas = Label(win, text="Write or paint on the pad", font="Currier")
+#label_canvas.grid(row=0, column=3, sticky=N)
+c = Canvas(frame_canvas, bg="light cyan", height=600)
+c.pack(side=TOP ,expand=True, fill=BOTH)
 
-button_brush_color= Button(win, text="Brush Color ", command=brushcolor)
-button_brush_color.grid(row= 9, column=3, sticky=W)
-button_bg_color= Button(win, text="BG Color   ", relief=SUNKEN, command=background_color)
-button_bg_color.grid(row=9, column=3)
-button_canvas_clear = Button(win, text="Clear Pad    ", relief=FLAT, command=clear_canvas)
-button_canvas_clear.grid(row=9,column=3,sticky=E)
+frame_all_butts= LabelFrame(frame_canvas)
+frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
+label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=creat_img())
+label_import_img.grid(row=0, column=0, sticky=W)
+label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
+label_control.grid(row=0, column=0)
+scale_control = ttk.Scale(frame_all_butts, from_=5, to=100,  command= brush_size_change)
+scale_control.set(brush_width)
+scale_control.grid(row=0, column=0, sticky=E)
+
+button_brush_color= Button(frame_all_butts, text="Brush Color ", command=brushcolor)
+button_brush_color.grid(row= 1, column=0, sticky=W)
+button_bg_color= Button(frame_all_butts, text="BG Color   ", relief=SUNKEN, command=background_color)
+button_bg_color.grid(row=1, column=0)
+button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=clear_canvas)
+button_canvas_clear.grid(row=1,column=0,sticky=E)
 
 c.bind("<B1-Motion>", paint)
 c.bind("<ButtonRelease-1>", reset)
