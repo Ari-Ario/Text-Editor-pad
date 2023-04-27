@@ -378,8 +378,7 @@ def creat_img():
 #all labels, buttons and scales on the pad
 frame_canvas= LabelFrame(root, text= "Write or paint on the pad")
 frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
-#label_canvas = Label(win, text="Write or paint on the pad", font="Currier")
-#label_canvas.grid(row=0, column=3, sticky=N)
+
 c = Canvas(frame_canvas, bg="light cyan", height=600)
 c.pack(side=TOP ,expand=True, fill=BOTH)
 
