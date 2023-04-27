@@ -280,7 +280,7 @@ button_exit=Button(win, text="Exit            ", relief=RAISED, command=win.dest
 button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
 
 #function of popup with right-click on text_box
-def do_popup(self, event):
+def do_popup(event):
     try:
         menu_popup.tk_popup(event.x_root, event.y_root, 0)
     finally:
@@ -375,32 +375,43 @@ def creat_img():
     img = Image.open("test.eps")
     #img.save("sth"+".png" , "PNG")
 
+def canvaspopup(event):
+    try:
+        canvas_popup.tk_popup(event.x_root, event.y_roo, 0)
+    finally:
+        canvas_popup.grab_release()
+
 #all labels, buttons and scales on the pad
 frame_canvas= LabelFrame(root, text= "Write or paint on the pad")
 frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
 c = Canvas(frame_canvas, bg="light cyan", height=600)
-c.pack(side=TOP ,expand=True, fill=BOTH)
+c.pack(side=TOP , expand=True, fill=BOTH)
 
+#all buttons, scale in a labelframe
 frame_all_butts= LabelFrame(frame_canvas)
 frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
 label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=creat_img())
 label_import_img.grid(row=0, column=0, sticky=W)
 label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
-label_control.grid(row=0, column=0)
+label_control.grid(row=0, column=1)
 scale_control = ttk.Scale(frame_all_butts, from_=5, to=100,  command= brush_size_change)
 scale_control.set(brush_width)
-scale_control.grid(row=0, column=0, sticky=E)
+scale_control.grid(row=0, column=2, sticky=E)
 
 button_brush_color= Button(frame_all_butts, text="Brush Color ", command=brushcolor)
 button_brush_color.grid(row= 1, column=0, sticky=W)
 button_bg_color= Button(frame_all_butts, text="BG Color   ", relief=SUNKEN, command=background_color)
-button_bg_color.grid(row=1, column=0)
+button_bg_color.grid(row=1, column=1)
 button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=clear_canvas)
-button_canvas_clear.grid(row=1,column=0,sticky=E)
+button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
 
 c.bind("<B1-Motion>", paint)
 c.bind("<ButtonRelease-1>", reset)
 
+#canvas popup-menu separately from textbox menu
+canvas_popup = Menu(c, tearoff=0)
+canvas_popup.add_command(label="hi", command=None)
+frame_canvas.bind("<Button-3>", do_popup)
 
 win.mainloop()
