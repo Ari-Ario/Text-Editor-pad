@@ -208,6 +208,7 @@ editing = Menu(menubar, activebackground="light blue", tearoff=0)
 menubar.add_cascade(menu=editing, label="EDIT")
 editing.add_command(label="Undo", command=undo)
 editing.add_command(label="Redo", command=redo)
+editing.add_command(label="Show Archive", command=open_new_win)
 #editing.add_command(label="Edit", command=None)
 editing.add_command(label="Clear page", command=clear_page)
 
@@ -266,8 +267,8 @@ button_replaceall.grid(row=3, column=0, rowspan=1, sticky=NE)
 sep1= ttk.Separator(win, orient="horizontal")
 sep1.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=EW)
 
-button_archive= Button(win, text="Show Archive", command=open_new_win)
-button_archive.grid(row=5, column=0, sticky=EW)
+#button_archive= Button(win, text="Show Archive", command=open_new_win)
+#button_archive.grid(row=5, column=0, sticky=EW)
 
 sep2= ttk.Separator(win, orient="horizontal")
 sep2.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=EW)
@@ -411,7 +412,7 @@ c.bind("<ButtonRelease-1>", reset)
 
 #canvas popup-menu separately from textbox menu
 canvas_popup = Menu(c, tearoff=0)
-canvas_popup.add_command(label="hi", command=None)
+canvas_popup.add_command(label="clear", command=clear_canvas)
 frame_canvas.bind("<Button-3>", do_popup)
 
 win.mainloop()
