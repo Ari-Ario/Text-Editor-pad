@@ -4,8 +4,9 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.colorchooser import askcolor
-from PIL import ImageGrab, ImageTk, Image
-
+from PIL import ImageGrab, ImageDraw, Image
+import time
+import sys
 
 #function to adjust the background-color of the text-box
 def color_adjustment_bg():
@@ -335,6 +336,7 @@ brush_width = 5
 brush_color = "black"
 old_x = None
 old_y = None
+coords = []
 
 #function to change pen-color
 def brushcolor():
@@ -357,6 +359,7 @@ def paint(e):
     global old_x, old_y
     if old_x and old_y:
         c.create_line(old_x, old_y, e.x, e.y, width= brush_width, fill=brush_color, capstyle="round")
+        coords.extend((int(old_x), int(old_y)))
     old_x = e.x
     old_y = e.y
 
@@ -372,27 +375,25 @@ def clear_canvas():
     c.delete(ALL)
 
 def creat_img():
-    p = c.postscript(file="test.eps", colormode="color", x=0, y=0, height=256, width=200)
-    img = Image.open("test.eps")
-    #img.save("sth"+".png" , "PNG")
-
-def canvaspopup(event):
-    try:
-        canvas_popup.tk_popup(event.x_root, event.y_roo, 0)
-    finally:
-        canvas_popup.grab_release()
+    c.update()
+    img = Image.new("RGB", (c.winfo_width(), c.winfo_height()), c["bg"])
+    draw_img = ImageDraw.Draw(img)
+    draw_img.line((coords), brush_color, width=5)
+    time.sleep(2)
+    img.save("img.jpg")
 
 #all labels, buttons and scales on the pad
 frame_canvas= LabelFrame(root, text= "Write or paint on the pad")
 frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
-c = Canvas(frame_canvas, bg="light cyan", height=600)
+c = Canvas(frame_canvas, bg="white", height=600)
 c.pack(side=TOP , expand=True, fill=BOTH)
 
 #all buttons, scale in a labelframe
 frame_all_butts= LabelFrame(frame_canvas)
 frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
-label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=creat_img())
+
+label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=creat_img)
 label_import_img.grid(row=0, column=0, sticky=W)
 label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
 label_control.grid(row=0, column=1)
@@ -407,12 +408,14 @@ button_bg_color.grid(row=1, column=1)
 button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=clear_canvas)
 button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
 
+
 c.bind("<B1-Motion>", paint)
 c.bind("<ButtonRelease-1>", reset)
 
 #canvas popup-menu separately from textbox menu
-canvas_popup = Menu(c, tearoff=0)
-canvas_popup.add_command(label="clear", command=clear_canvas)
-frame_canvas.bind("<Button-3>", do_popup)
+#canvas_popup = Menu(frame_canvas, tearoff=0)
+#canvas_popup.add_command(label="clear", command=None)
+#canvas_popup.add_command(label="Sth", command=None)
+#frame_canvas.bind("<Button-3>", canvaspopup)
 
 win.mainloop()
