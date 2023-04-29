@@ -6,7 +6,8 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.colorchooser import askcolor
 from PIL import ImageGrab, ImageDraw, Image
 import time
-import sys
+import os
+import subprocess
 
 #function to adjust the background-color of the text-box
 def color_adjustment_bg():
@@ -374,13 +375,11 @@ def reset(e):
 def clear_canvas():
     c.delete(ALL)
 
+#function to save the image as .ps
 def creat_img():
-    c.update()
-    img = Image.new("RGB", (c.winfo_width(), c.winfo_height()), c["bg"])
-    draw_img = ImageDraw.Draw(img)
-    draw_img.line((coords), brush_color, width=5)
-    time.sleep(2)
-    img.save("img.jpg")
+    c.postscript(file="temp.ps", colormode="color")
+    process = subprocess.Popen(["ps2pdf", "temp.ps", "result.pdf"], shell=True)
+    process.wait(1)
 
 #all labels, buttons and scales on the pad
 frame_canvas= LabelFrame(root, text= "Write or paint on the pad")
