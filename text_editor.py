@@ -375,10 +375,21 @@ def reset(e):
 def clear_canvas():
     c.delete(ALL)
 
+#a pop-up window to insert the file-name. it will bind with creat_img function.
+def save_image_as():
+    win_save_as = Tk()
+    win_save_as.title("Enter file-name")
+    entry_save_as = Entry(win_save_as)
+    entry_save_as.grid(row=0, column=0)
+    file_name = entry_save_as.get()
+    button_save_as= Button(win_save_as,text="Save", command=creat_img(str(file_name)))
+    button_save_as.grid(row=0, column=1)
+
+
 #function to save the image as .ps
-def creat_img():
-    c.postscript(file="temp.ps", colormode="color")
-    process = subprocess.Popen(["ps2pdf", "temp.ps", "result.pdf"], shell=True)
+def creat_img(name="temp"):
+    c.postscript(file= f"{name}.ps", colormode="color")
+    process = subprocess.Popen(["ps2pdf", f"{name}.ps", "result.pdf"], shell=True)
     process.wait(1)
 
 #all labels, buttons and scales on the pad
