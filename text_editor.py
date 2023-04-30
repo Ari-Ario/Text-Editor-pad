@@ -206,7 +206,7 @@ class AppTextPad():
         self.win.rowconfigure([0,1,2,3,4,5,6,7,8,9], weight=1, minsize=1)
         self.win.columnconfigure([0,1,2], weight=1, minsize=5)
 
-        self.text_box = Text(self.win, width=100, height=40, bg="white", undo=True, maxundo=-1)
+        self.text_box = Text(self.win, width=100, height=40, bg="white", undo=True, maxundo=-1, font="Helvetica")
         self.text_box.grid(row=0, column=1, rowspan=10, sticky="nsew")
 
         scroll_bar = Scrollbar(self.win, orient="vertical")
