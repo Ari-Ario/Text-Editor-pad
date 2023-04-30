@@ -1,4 +1,4 @@
-"""A simple Text-editor and pad beside it"""
+"""A simple Text-editor and a pad beside it"""
 
 from tkinter import *
 from tkinter import messagebox, ttk
@@ -76,8 +76,10 @@ class app():
             return self.error_box()
         with open(path, mode="r", encoding="utf-8") as file:
             text = file.readlines()
-            self.text_box.insert(END, text) 
-        self.win.title(f"Simple Text Editor - {path}")
+            for line in text:
+                line.rstrip()
+                self.text_box.insert(END, line) 
+        #self.master.title(f"Simple Text Editor - {path}")
 
     #function to save the file 
     def saveas_file(self):
@@ -87,7 +89,12 @@ class app():
         with open(path, "w") as file:
             text = self.text_box.get("1.0", END)
             file.write(text)
-        self.win.title(f"Simple Text Editor -{path}")
+        #self.master.title(f"Simple Text Editor -{path}")
+
+    #function of save as button and then exit the text-editor
+    def save_and_exit(self):
+        self.saveas_file()
+        self.master.destroy()
 
     #function to show a pop-up window, in case you havenot opened or saved the file correctly
     def error_box(self):
@@ -99,11 +106,11 @@ class app():
                             Ismail Mostafanejad in 2022 - aim of portfolio. It is an open source code/ writtten in Python!")
 
     #function to erase the text-box (Page)
-    def clear_page():
+    def clear_page(self):
         self.text_box.delete("1.0", END)
 
     #function to find the searched keyword
-    def find(input_entry):
+    def find(self, input_entry):
         input_box = self.text_box.get("1.0", END).split("\n")
         dict = {}
         for i, line in enumerate(input_box):
@@ -122,7 +129,7 @@ class app():
     #function to search the keyword. it is needs above function: find
     def search(self):
         input_entry = self.entry_search.get()
-        dict= find(input_entry)
+        dict= self.find(input_entry)
         for key, val in dict.items():
             for v in val:
                 idx_start, idx_end = f"{key}.{v}", f"{key}.{v + len(input_entry)}"
@@ -134,7 +141,7 @@ class app():
         input_entry_search = self.entry_search.get()
         input_entry_replace = self.entry_replace.get()
         length = len(input_entry_search) - len(input_entry_replace)
-        dict = find(input_entry_search)
+        dict = self.find(input_entry_search)
         for key, val in dict.items():
             diff = 0
             for v in val:
@@ -161,11 +168,6 @@ class app():
                 self.text_box.insert(idx_start, input_replace)
                 i+=1
                 break
-
-    #function of save as button and then exit the text-editor
-    def save_and_exit(self):
-        self.saveas_file()
-        self.win.destroy()
 
     #function for undo in menu-Edite
     def undo(self):
@@ -199,50 +201,50 @@ class app():
             
     def window_main(self):
         #code of the main window
-        win= LabelFrame(self.master)
-        win.pack(side=LEFT, fill=BOTH, expand=True)
-        win.rowconfigure([0,1,2,3,4,5,6,7,8,9], weight=1, minsize=1)
-        win.columnconfigure([0,1,2], weight=1, minsize=5)
+        self.win= LabelFrame(self.master)
+        self.win.pack(side=LEFT, fill=BOTH, expand=True)
+        self.win.rowconfigure([0,1,2,3,4,5,6,7,8,9], weight=1, minsize=1)
+        self.win.columnconfigure([0,1,2], weight=1, minsize=5)
 
-        self.text_box = Text(win, width=100, height=40, bg="white", undo=True, maxundo=-1)
+        self.text_box = Text(self.win, width=100, height=40, bg="white", undo=True, maxundo=-1)
         self.text_box.grid(row=0, column=1, rowspan=10, sticky="nsew")
 
-        scroll_bar = Scrollbar(win, orient="vertical")
+        scroll_bar = Scrollbar(self.win, orient="vertical")
         scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS)
         self.text_box.config(yscrollcommand = scroll_bar.set)
         scroll_bar.config(command=self.text_box.yview)
 
         #column of the all buttons and boxes at the left side
 
-        entry_search= Entry(win, width=20)
-        entry_search.grid(row=1, column=0, rowspan=1, sticky="w")
-        button_search= Button(win, text="Search ", relief=GROOVE, command=self.search)
+        self.entry_search= Entry(self.win, width=20)
+        self.entry_search.grid(row=1, column=0, rowspan=1, sticky="w")
+        button_search= Button(self.win, text="Search ", relief=GROOVE, command=self.search)
         button_search.grid(row=1, column=0, rowspan=1, sticky="e")
 
-        entry_replace = Entry(win, width=20)
-        entry_replace.grid(row= 2, column=0, rowspan=1, sticky="w")
-        button_replace= Button(win, text="Replace", command=self.replace)
+        self.entry_replace = Entry(self.win, width=20)
+        self.entry_replace.grid(row= 2, column=0, rowspan=1, sticky="w")
+        button_replace= Button(self.win, text="Replace", command=self.replace)
         button_replace.grid(row=2, column=0, sticky=E)
-        button_replaceall= Button(win, text="Rep. All ", relief=GROOVE, command=self.replaceall)
+        button_replaceall= Button(self.win, text="Rep. All ", relief=GROOVE, command=self.replaceall)
         button_replaceall.grid(row=3, column=0, rowspan=1, sticky=NE)
 
-        sep1= ttk.Separator(win, orient="horizontal")
+        sep1= ttk.Separator(self.win, orient="horizontal")
         sep1.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=EW)
 
         #button_archive= Button(win, text="Show Archive", command=open_new_win)
         #button_archive.grid(row=5, column=0, sticky=EW)
 
-        sep2= ttk.Separator(win, orient="horizontal")
+        sep2= ttk.Separator(self.win, orient="horizontal")
         sep2.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=EW)
 
-        button_info = Button(win, text="About         ", relief=RAISED, command=self.message_box)
+        button_info = Button(self.win, text="About         ", relief=RAISED, command=self.message_box)
         button_info.grid(row=8, column=0, sticky="ne")
-        button_saveexit = Button(win, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
+        button_saveexit = Button(self.win, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
         button_saveexit.grid(row=8, column=0, sticky="se")
-        button_exit=Button(win, text="Exit            ", relief=RAISED, command=win.destroy)
+        button_exit=Button(self.win, text="Exit Text       ", relief=RAISED, command=self.win.destroy)
         button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
 
-        menubar = Menu(win)
+        menubar = Menu(self.win)
         root.config(menu=menubar)
 
         file = Menu(menubar, activebackground="cyan", tearoff=0)
@@ -251,7 +253,7 @@ class app():
         file.add_command(label="Import File", command=self.open_file)
         file.add_command(label="Save As", command=self.saveas_file)
         file.add_separator()
-        file.add_command(label="Exit", command=win.destroy)
+        file.add_command(label="Exit", command=self.master.destroy)
 
         editing = Menu(menubar, activebackground="light blue", tearoff=0)
         menubar.add_cascade(menu=editing, label="EDIT")
@@ -287,11 +289,11 @@ class app():
         color.add_command(label="Color Bar", command=self.color_adjustment)
 
         #popup-menu on the textbox
-        menu_popup = Menu(win, tearoff=0)
-        menu_popup.add_command(label="copy", command= lambda: self.copy())
-        menu_popup.add_command(label="paste", command=lambda: self.paste())
-        menu_popup.add_command(label="cut", command= lambda: self.cut())
-        menu_popup.add_command(label="Archive", command=lambda: self.archive())
+        self.menu_popup = Menu(self.win, tearoff=0)
+        self.menu_popup.add_command(label="copy", command= lambda: self.copy())
+        self.menu_popup.add_command(label="paste", command=lambda: self.paste())
+        self.menu_popup.add_command(label="cut", command= lambda: self.cut())
+        self.menu_popup.add_command(label="Archive", command=lambda: self.archive())
         self.text_box.bind("<Button-3>", self.do_popup)
 
         color_background = Menu(menubar, tearoff=0)
@@ -309,23 +311,20 @@ class app():
 
     #function to copy selected text
     def copy(self):
-        global data
         if self.text_box.selection_get():
-            data= self.text_box.selection_get()
+            self.data= self.text_box.selection_get()
         #e.bind("<Control-c>")
 
     #function to cut selected text
     def cut(self):
-        global data
         if self.text_box.selection_get():
-            data= self.text_box.selection_get()
+            self.data= self.text_box.selection_get()
             self.text_box.delete("sel.first", "sel.last")
         #text_box.bind("<Control+x>")
 
     #function to paste selected text
     def paste(self):
-        global data
-        self.text_box.insert(END, data)
+        self.text_box.insert(END, self.data)
 
     #function to archive selected text for later use. This is connected with show-archive butten
     def archive(self):
