@@ -9,7 +9,7 @@ import time
 import os
 import subprocess
 
-class app():
+class AppTextPad():
     def __init__(self, master):
         self.master = master
         self.brush_width = 5
@@ -375,11 +375,29 @@ class app():
     def clear_canvas(self):
         self.c.delete(ALL)
 
+    #a pop-up window to insert the file-name. it will bind with creat_img function.
+    def save_image_as(self):
+        self.win_save_as = Tk()
+        self.win_save_as.title("Enter file-name")
+        self.entry_save_as = Entry(self.win_save_as)
+        self.entry_save_as.grid(row=0, column=0)
+        button_save_as= Button(self.win_save_as,text="Save", command=self.creat_img)
+        button_save_as.grid(row=0, column=1)
+
     #function to save the image as .ps
-    def creat_img(self):
-        self.c.postscript(file="temp.ps", colormode="color")
-        process = subprocess.Popen(["ps2pdf", "temp.ps", "result.pdf"], shell=True)
+    def creat_img(self, file_name="temp"):
+        file_name= self.entry_save_as.get()
+        self.c.postscript(file=f"{file_name}.ps", colormode="color")
+        process = subprocess.Popen(["ps2pdf", f"{file_name}.ps", "result.pdf"], shell=True)
         process.wait(1)
+        self.win_save_as.destroy()
+
+    #Method of popup with right-click on text_box
+    def do_canvas_popup(self, event):
+        try:
+            self.canvas_popup.tk_popup(event.x_root, event.y_root, 0)
+        finally:
+            self.canvas_popup.grab_release()
     
     def canvas(self):
         #all labels, buttons and scales on the pad
@@ -393,7 +411,7 @@ class app():
         frame_all_butts= LabelFrame(frame_canvas)
         frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
 
-        label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.creat_img)
+        label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.save_image_as)
         label_import_img.grid(row=0, column=0, sticky=W)
         label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
         label_control.grid(row=0, column=1)
@@ -408,18 +426,18 @@ class app():
         button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=self.clear_canvas)
         button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
 
-
         self.c.bind("<B1-Motion>", self.paint)
         self.c.bind("<ButtonRelease-1>", self.reset)
 
         #canvas popup-menu separately from textbox menu
-        #canvas_popup = Menu(frame_canvas, tearoff=0)
-        #canvas_popup.add_command(label="clear", command=None)
-        #canvas_popup.add_command(label="Sth", command=None)
-        #frame_canvas.bind("<Button-3>", canvaspopup)
+        self.canvas_popup = Menu(self.c, tearoff=0)
+        self.canvas_popup.add_command(label="Save Pad", command=self.save_image_as)
+        self.canvas_popup.add_command(label="clear Pad", command=self.clear_canvas)
+        self.canvas_popup.add_command(label="Exit Pad", command=self.c.destroy)
+        self.c.bind("<Button-3>", self.do_canvas_popup)
 
 if __name__ == "__main__":
     root = Tk()
     root.title("Text Editor")
-    app(root)
+    AppTextPad(root)
     root.mainloop()
