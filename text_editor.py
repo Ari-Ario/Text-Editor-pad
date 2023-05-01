@@ -4,7 +4,7 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from tkinter.colorchooser import askcolor
-from PIL import ImageGrab, ImageDraw, Image
+from PIL import ImageGrab, ImageDraw, Image, ImageTk
 import time
 import os
 import subprocess
@@ -392,12 +392,23 @@ class AppTextPad():
         process.wait(1)
         self.win_save_as.destroy()
 
+    #method of importing image
+    def import_img(self):
+        path = askopenfilename(defaultextension=".jpg", filetypes=[("All Files", "*.*"), ("PS Files", ".ps")])
+        if path:
+            self.img = ImageTk.PhotoImage(Image.open(path))
+            self.c.create_image(20, 20, anchor=NW, image= self.img)
+            self.c.image= self.img
+        else:
+            messagebox.showerror("Path-Error", "The path doesn´t exist")
+
     #Method of popup with right-click on text_box
     def do_canvas_popup(self, event):
         try:
             self.canvas_popup.tk_popup(event.x_root, event.y_root, 0)
         finally:
             self.canvas_popup.grab_release()
+    
     
     def canvas(self):
         #all labels, buttons and scales on the pad
@@ -431,6 +442,7 @@ class AppTextPad():
 
         #canvas popup-menu separately from textbox menu
         self.canvas_popup = Menu(self.c, tearoff=0)
+        self.canvas_popup.add_command(label="import img", command=self.import_img)
         self.canvas_popup.add_command(label="Save Pad", command=self.save_image_as)
         self.canvas_popup.add_command(label="clear Pad", command=self.clear_canvas)
         self.canvas_popup.add_command(label="Exit Pad", command=self.c.destroy)
