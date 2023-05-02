@@ -253,7 +253,7 @@ class AppTextPad():
         button_info.grid(row=8, column=0, sticky="ne")
         button_saveexit = Button(self.win, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
         button_saveexit.grid(row=8, column=0, sticky="se")
-        button_exit=Button(self.win, text="Exit Text       ", relief=RAISED, command=self.win.destroy)
+        button_exit=Button(self.win, text="Exit Text    ", relief=RAISED, command=self.win.destroy)
         button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
 
         menubar = Menu(self.win)
@@ -388,6 +388,17 @@ class AppTextPad():
     def clear_canvas(self):
         self.c.delete(ALL)
 
+    #push image from canvas into the text
+    def push_img_into_text(self, file_name="push"):
+        self.c.postscript(file=f"{file_name}.ps", colormode="color")
+        process = subprocess.Popen(["ps2pdf", f"{file_name}.ps", "sth.pdf"], shell=True)
+        process.wait(1)
+        img = ImageTk.PhotoImage(Image.open(f"{file_name}.ps"))
+        self.text_box.insert(END, "\n")
+        self.text_box.image_create(END, image= img)
+        self.text_box.image= img
+        self.text_box.insert(END, "\n")
+
     #a pop-up window to insert the file-name. it will bind with creat_img function.
     def save_image_as(self):
         self.win_save_as = Tk()
@@ -398,7 +409,7 @@ class AppTextPad():
         button_save_as.grid(row=0, column=1)
 
     #function to save the image as .ps
-    def creat_img(self, file_name="temp"):
+    def create_img(self, file_name="temp"):
         file_name= self.entry_save_as.get()
         self.c.postscript(file=f"{file_name}.ps", colormode="color")
         process = subprocess.Popen(["ps2pdf", f"{file_name}.ps", "result.pdf"], shell=True)
@@ -449,14 +460,17 @@ class AppTextPad():
         button_bg_color.grid(row=1, column=1)
         button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=self.clear_canvas)
         button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
+        button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
+        button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW)
 
         self.c.bind("<B1-Motion>", self.paint)
         self.c.bind("<ButtonRelease-1>", self.reset)
 
         #canvas popup-menu separately from textbox menu
         self.canvas_popup = Menu(self.c, tearoff=0)
-        self.canvas_popup.add_command(label="import img", command=self.import_img)
-        self.canvas_popup.add_command(label="Save Pad", command=self.save_image_as)
+        self.canvas_popup.add_command(label="Push into text", command=self.push_img_into_text)
+        self.canvas_popup.add_command(label="import imgae", command=self.import_img)
+        self.canvas_popup.add_command(label="Save image", command=self.save_image_as)
         self.canvas_popup.add_command(label="clear Pad", command=self.clear_canvas)
         self.canvas_popup.add_command(label="Exit Pad", command=self.c.destroy)
         self.c.bind("<Button-3>", self.do_canvas_popup)
