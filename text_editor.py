@@ -81,7 +81,19 @@ class AppTextPad():
                 self.text_box.insert(END, line) 
         #self.master.title(f"Simple Text Editor - {path}")
 
-    #function to save the file 
+    #method to add image into text_box
+    def import_img_into_text(self):
+        path = askopenfilename(defaultextension=".jpg", filetypes=[("All Files", "*.*"), ("PS Files", ".ps")])
+        if path:
+            img = ImageTk.PhotoImage(Image.open(path))
+            self.text_box.insert(END, "\n")
+            self.text_box.image_create(END, image= img)
+            self.text_box.image= img
+            self.text_box.insert(END, "\n")
+        else:
+            messagebox.showerror("Path-Error", "The path doesn´t exist")
+
+    #method to save the file 
     def saveas_file(self):
         path = asksaveasfilename(defaultextension="*.txt", filetypes=[("Text File", ".txt"),("PDF File", ".pdf"), ("All Files", "*.*")])
         if not path:
@@ -91,12 +103,12 @@ class AppTextPad():
             file.write(text)
         #self.master.title(f"Simple Text Editor -{path}")
 
-    #function of save as button and then exit the text-editor
+    #method of save as button and then exit the text-editor
     def save_and_exit(self):
         self.saveas_file()
         self.master.destroy()
 
-    #function to show a pop-up window, in case you havenot opened or saved the file correctly
+    #method to show a pop-up window, in case you havenot opened or saved the file correctly
     def error_box(self):
         messagebox.showerror("Upps", "something went wrong, Maybe not opened or saved correctly!")
 
@@ -105,11 +117,11 @@ class AppTextPad():
         messagebox.showinfo("About this app", "This Application is developed by\
                             Ismail Mostafanejad in 2022 - aim of portfolio. It is an open source code/ writtten in Python!")
 
-    #function to erase the text-box (Page)
+    #method to erase the text-box (Page)
     def clear_page(self):
         self.text_box.delete("1.0", END)
 
-    #function to find the searched keyword
+    #method to find the searched keyword
     def find(self, input_entry):
         input_box = self.text_box.get("1.0", END).split("\n")
         dict = {}
@@ -251,6 +263,7 @@ class AppTextPad():
         menubar.add_cascade(menu=file, label="FILE")
         file.add_command(label="New File", command=self.clean_text_box)
         file.add_command(label="Import File", command=self.open_file)
+        file.add_command(label="Import image", command= self.import_img_into_text)
         file.add_command(label="Save As", command=self.saveas_file)
         file.add_separator()
         file.add_command(label="Exit", command=self.master.destroy)
