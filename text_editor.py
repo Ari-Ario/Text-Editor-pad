@@ -226,34 +226,36 @@ class AppTextPad():
         self.text_box.config(yscrollcommand = scroll_bar.set)
         scroll_bar.config(command=self.text_box.yview)
 
-        #column of the all buttons and boxes at the left side
-
-        self.entry_search= Entry(self.win, width=20)
+        #LabelFrame for all buttons and entries in left-menu
+        self.frame_left= LabelFrame(self.win, width=35)
+        self.frame_left.grid(row=0, column=0, rowspan=10, sticky=NS)
+        #Buttons and Entries within frame_left
+        self.entry_search= Entry(self.frame_left, width=20)
         self.entry_search.grid(row=1, column=0, rowspan=1, sticky="w")
-        button_search= Button(self.win, text="Search ", relief=GROOVE, command=self.search)
+        button_search= Button(self.frame_left, text="Search ", relief=GROOVE, command=self.search)
         button_search.grid(row=1, column=0, rowspan=1, sticky="e")
 
-        self.entry_replace = Entry(self.win, width=20)
+        self.entry_replace = Entry(self.frame_left, width=20)
         self.entry_replace.grid(row= 2, column=0, rowspan=1, sticky="w")
-        button_replace= Button(self.win, text="Replace", command=self.replace)
+        button_replace= Button(self.frame_left, text="Replace", command=self.replace)
         button_replace.grid(row=2, column=0, sticky=E)
-        button_replaceall= Button(self.win, text="Rep. All ", relief=GROOVE, command=self.replaceall)
+        button_replaceall= Button(self.frame_left, text="Rep. All ", relief=GROOVE, command=self.replaceall)
         button_replaceall.grid(row=3, column=0, rowspan=1, sticky=NE)
 
-        sep1= ttk.Separator(self.win, orient="horizontal")
+        sep1= ttk.Separator(self.frame_left, orient="horizontal")
         sep1.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=EW)
 
         #button_archive= Button(win, text="Show Archive", command=open_new_win)
         #button_archive.grid(row=5, column=0, sticky=EW)
 
-        sep2= ttk.Separator(self.win, orient="horizontal")
+        sep2= ttk.Separator(self.frame_left, orient="horizontal")
         sep2.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=EW)
 
-        button_info = Button(self.win, text="About         ", relief=RAISED, command=self.message_box)
+        button_info = Button(self.frame_left, text="About         ", relief=RAISED, command=self.message_box)
         button_info.grid(row=8, column=0, sticky="ne")
-        button_saveexit = Button(self.win, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
+        button_saveexit = Button(self.frame_left, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
         button_saveexit.grid(row=8, column=0, sticky="se")
-        button_exit=Button(self.win, text="Exit Text    ", relief=RAISED, command=self.win.destroy)
+        button_exit=Button(self.frame_left, text="Exit Text    ", relief=RAISED, command=self.win.destroy)
         button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
 
         menubar = Menu(self.win)
@@ -301,6 +303,18 @@ class AppTextPad():
         color.add_separator()
         color.add_command(label="Color Bar", command=self.color_adjustment)
 
+        color_background = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="BG-COLOR", menu=color_background)
+        color_background.add_command(label="Color Chooser", command=self.color_adjustment_bg)
+        
+        #SHOW/HIDE in menubar
+        self.show_hide = Menu(menubar, tearoff=0)
+        menubar.add_cascade(menu=self.show_hide, label="HIDE/SHOW")
+        self.show_hide.add_command(label="Hide menu", command=None)
+        self.show_hide.add_command(label="Show menu", command=None)
+        self.show_hide.add_command(label="Hide Pad", command=self.hide_frame_canvas)
+        self.show_hide.add_command(label="Show Pad", command=self.show_frame_canvas)
+
         #popup-menu on the textbox
         self.menu_popup = Menu(self.win, tearoff=0)
         self.menu_popup.add_command(label="copy", command= lambda: self.copy())
@@ -308,11 +322,6 @@ class AppTextPad():
         self.menu_popup.add_command(label="cut", command= lambda: self.cut())
         self.menu_popup.add_command(label="Archive", command=lambda: self.archive())
         self.text_box.bind("<Button-3>", self.do_popup)
-
-        color_background = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="BG-COLOR", menu=color_background)
-        color_background.add_command(label="Color Chooser", command=self.color_adjustment_bg)
-        #help-menu plus messagebox
 
 
     #function of popup with right-click on text_box
@@ -433,12 +442,13 @@ class AppTextPad():
         finally:
             self.canvas_popup.grab_release()
     
-    #method hiding frame_canvas
-    def hide_show_frame_canvas(self):
-        if self.frame_canvas:
-            self.frame_canvas.pack_forget()
-        else:
-            self.frame_canvas.pack()
+    #methods hiding frame_canvas
+    def hide_frame_canvas(self):
+        self.frame_canvas.pack_forget()
+
+    def show_frame_canvas(self):
+        self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
+                        
     
     def canvas(self):
         #all labels, buttons and scales on the pad
@@ -468,8 +478,8 @@ class AppTextPad():
         button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
         button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
         button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW)
-        hide_show_butt_canvas= Button(frame_all_butts, text="hide/show", command=self.hide_show_frame_canvas)
-        hide_show_butt_canvas.grid(row=3, column=2)
+        hide_show_butt_canvas= Button(frame_all_butts, text="Hide Pad -\N{RIGHTWARDS ARROW}", command=self.hide_frame_canvas)
+        hide_show_butt_canvas.grid(row=3, column=2, sticky=E)
 
         self.c.bind("<B1-Motion>", self.paint)
         self.c.bind("<ButtonRelease-1>", self.reset)
