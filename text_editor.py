@@ -433,17 +433,23 @@ class AppTextPad():
         finally:
             self.canvas_popup.grab_release()
     
+    #method hiding frame_canvas
+    def hide_show_frame_canvas(self):
+        if self.frame_canvas:
+            self.frame_canvas.pack_forget()
+        else:
+            self.frame_canvas.pack()
     
     def canvas(self):
         #all labels, buttons and scales on the pad
-        frame_canvas= LabelFrame(self.master, text= "Write or paint on the pad")
-        frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
+        self.frame_canvas= LabelFrame(self.master, text= "Write or paint on the pad")
+        self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
-        self.c = Canvas(frame_canvas, bg="white", height=600)
+        self.c = Canvas(self.frame_canvas, bg="white", height=600)
         self.c.pack(side=TOP , expand=True, fill=BOTH)
 
         #all buttons, scale in a labelframe
-        frame_all_butts= LabelFrame(frame_canvas)
+        frame_all_butts= LabelFrame(self.frame_canvas)
         frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
 
         label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.save_image_as)
@@ -462,6 +468,8 @@ class AppTextPad():
         button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
         button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
         button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW)
+        hide_show_butt_canvas= Button(frame_all_butts, text="hide/show", command=self.hide_show_frame_canvas)
+        hide_show_butt_canvas.grid(row=3, column=2)
 
         self.c.bind("<B1-Motion>", self.paint)
         self.c.bind("<ButtonRelease-1>", self.reset)
