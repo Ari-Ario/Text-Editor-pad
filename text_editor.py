@@ -210,6 +210,13 @@ class AppTextPad():
                 list.append(word)
         text_b.insert("1.0", "A list of archieve: "+str(list))
         f.close()
+
+    #Two Methods to hide and show the Menu-Ffame at LEFT of window
+    def hide_frame_left(self):
+        self.frame_left.grid_forget()
+
+    def show_frame_left(self):
+        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NSEW)
             
     def window_main(self):
         #code of the main window
@@ -250,7 +257,7 @@ class AppTextPad():
         button_saveexit.grid(row=17, column=1, sticky=EW)
         button_exit=Button(self.frame_left, text="Hide Text    ", relief=RAISED, command=self.win.destroy)
         button_exit.grid(row=18, column=1, rowspan=1, columnspan=1, sticky=EW)
-        button_hide_frame_left= Button(self.frame_left, text="\N{LEFTWARDS ARROW}- Hide menu")
+        button_hide_frame_left= Button(self.frame_left, text="\N{LEFTWARDS ARROW}- Hide menu", command=self.hide_frame_left)
         button_hide_frame_left.grid(row=19, column=0, sticky=W)
 
         #Text-box and its scrollbar in column 1 and 2
@@ -314,8 +321,8 @@ class AppTextPad():
         #SHOW/HIDE in menubar
         self.show_hide = Menu(menubar, tearoff=0)
         menubar.add_cascade(menu=self.show_hide, label="HIDE/SHOW")
-        self.show_hide.add_command(label="Hide menu", command=None)
-        self.show_hide.add_command(label="Show menu", command=None)
+        self.show_hide.add_command(label="Hide left-menu", command=self.hide_frame_left)
+        self.show_hide.add_command(label="Show lrftmenu", command=self.show_frame_left)
         self.show_hide.add_command(label="Hide Pad", command=self.hide_frame_canvas)
         self.show_hide.add_command(label="Show Pad", command=self.show_frame_canvas)
 
