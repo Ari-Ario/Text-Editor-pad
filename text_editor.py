@@ -226,9 +226,10 @@ class AppTextPad():
         self.win.columnconfigure([0,1,2], weight=1, minsize=5)
 
         #LabelFrame for all buttons and entries in left-menu, in column 0
-        self.frame_left= LabelFrame(self.win, width=30)
-        self.frame_left.rowconfigure([0,1,2,3,4,5,6,7,8,9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19], weight=1, minsize=1)
-        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NSEW)
+        self.frame_left= LabelFrame(self.win)
+        for i in range(50):
+            self.frame_left.rowconfigure([i], weight=1, minsize=0)
+        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NS ,padx=2, pady=5)
         #Buttons and Entries within frame_left
         self.entry_search= Entry(self.frame_left, width=17)
         self.entry_search.grid(row=4, column=0, rowspan=1, sticky=EW)
@@ -245,27 +246,26 @@ class AppTextPad():
         sep1= ttk.Separator(self.frame_left, orient="horizontal")
         sep1.grid(row=7, column=0, rowspan=1, columnspan=2, sticky=EW)
 
-        #button_archive= Button(win, text="Show Archive", command=open_new_win)
-        #button_archive.grid(row=5, column=0, sticky=EW)
+        label= Label(self.frame_left, text=" ", padx=50, pady=50).grid(row= 9, sticky=EW)
 
         sep2= ttk.Separator(self.frame_left, orient="horizontal")
-        sep2.grid(row=15, column=0, columnspan=2, rowspan=1, sticky=EW)
+        sep2.grid(row=45, column=0, columnspan=2, rowspan=1, sticky=EW)
 
         button_info = Button(self.frame_left, text="About         ", relief=RAISED, command=self.message_box)
-        button_info.grid(row=16, column=1, sticky=EW)
+        button_info.grid(row=46, column=1, sticky=EW)
         button_saveexit = Button(self.frame_left, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
-        button_saveexit.grid(row=17, column=1, sticky=EW)
+        button_saveexit.grid(row=47, column=1, sticky=EW)
         button_exit=Button(self.frame_left, text="Hide Text    ", relief=RAISED, command=self.win.destroy)
-        button_exit.grid(row=18, column=1, rowspan=1, columnspan=1, sticky=EW)
+        button_exit.grid(row=48, column=1, rowspan=1, columnspan=1, sticky=EW)
         button_hide_frame_left= Button(self.frame_left, text="\N{LEFTWARDS ARROW}- Hide menu", command=self.hide_frame_left)
-        button_hide_frame_left.grid(row=19, column=0, sticky=W)
+        button_hide_frame_left.grid(row=49, column=0, sticky=W)
 
         #Text-box and its scrollbar in column 1 and 2
         self.text_box = Text(self.win, bg="white", undo=True, maxundo=-1, font="Helvetica")
-        self.text_box.grid(row=0, column=1, rowspan=10, sticky=NSEW)
+        self.text_box.grid(row=0, column=1, rowspan=10, sticky=NSEW, padx=0)
 
         scroll_bar = Scrollbar(self.win, orient="vertical")
-        scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS)
+        scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS, padx=0)
         self.text_box.config(yscrollcommand = scroll_bar.set)
         scroll_bar.config(command=self.text_box.yview)
 
@@ -466,20 +466,20 @@ class AppTextPad():
         self.frame_canvas= LabelFrame(self.master, text= "Write or paint on the pad")
         self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
-        self.c = Canvas(self.frame_canvas, bg="white", height=600)
+        self.c = Canvas(self.frame_canvas, bg="white", height=580)
         self.c.pack(side=TOP , expand=True, fill=BOTH)
 
         #all buttons, scale in a labelframe
         frame_all_butts= LabelFrame(self.frame_canvas)
-        frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH)
+        frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH, padx=5, pady=5)
 
         label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.save_image_as)
-        label_import_img.grid(row=0, column=0, sticky=W)
+        label_import_img.grid(row=0, column=0, sticky=W, pady=5)
         label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
-        label_control.grid(row=0, column=1)
+        label_control.grid(row=0, column=1, pady=5)
         scale_control = ttk.Scale(frame_all_butts, from_=5, to=100,  command= self.brush_size_change)
         scale_control.set(self.brush_width)
-        scale_control.grid(row=0, column=2, sticky=E)
+        scale_control.grid(row=0, column=2, sticky=E, pady=5)
 
         button_brush_color= Button(frame_all_butts, text="Brush Color ", command=self.brushcolor)
         button_brush_color.grid(row= 1, column=0, sticky=W)
@@ -488,9 +488,9 @@ class AppTextPad():
         button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=self.clear_canvas)
         button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
         button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
-        button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW)
+        button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW, pady=5)
         hide_show_butt_canvas= Button(frame_all_butts, text="Hide Pad -\N{RIGHTWARDS ARROW}", command=self.hide_frame_canvas)
-        hide_show_butt_canvas.grid(row=3, column=2, sticky=E)
+        hide_show_butt_canvas.grid(row=3, column=2, sticky=E, pady=5)
 
         self.c.bind("<B1-Motion>", self.paint)
         self.c.bind("<ButtonRelease-1>", self.reset)
