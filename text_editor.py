@@ -229,43 +229,47 @@ class AppTextPad():
         self.frame_left= LabelFrame(self.win)
         for i in range(50):
             self.frame_left.rowconfigure([i], weight=1, minsize=0)
-        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NS ,padx=2, pady=5)
         #Buttons and Entries within frame_left
         self.entry_search= Entry(self.frame_left, width=17)
-        self.entry_search.grid(row=4, column=0, rowspan=1, sticky=EW)
         button_search= Button(self.frame_left, text="Search ", relief=GROOVE, command=self.search)
-        button_search.grid(row=4, column=1, rowspan=1, sticky=EW)
 
         self.entry_replace = Entry(self.frame_left, width=17)
-        self.entry_replace.grid(row= 5, column=0, rowspan=1, sticky=EW)
         button_replace= Button(self.frame_left, text="Replace", command=self.replace)
-        button_replace.grid(row=5, column=1, sticky=EW)
         button_replaceall= Button(self.frame_left, text="Rep. All ", relief=GROOVE, command=self.replaceall)
-        button_replaceall.grid(row=6, column=1, rowspan=1, sticky=EW)
 
         sep1= ttk.Separator(self.frame_left, orient="horizontal")
-        sep1.grid(row=7, column=0, rowspan=1, columnspan=2, sticky=EW)
 
-        label= Label(self.frame_left, text=" ", padx=50, pady=50).grid(row= 9, sticky=EW)
+        labels_space= Label(self.frame_left, text=" ", padx=50, pady=50)
 
         sep2= ttk.Separator(self.frame_left, orient="horizontal")
-        sep2.grid(row=45, column=0, columnspan=2, rowspan=1, sticky=EW)
 
         button_info = Button(self.frame_left, text="About         ", relief=RAISED, command=self.message_box)
-        button_info.grid(row=46, column=1, sticky=EW)
         button_saveexit = Button(self.frame_left, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
-        button_saveexit.grid(row=47, column=1, sticky=EW)
         button_exit=Button(self.frame_left, text="Hide Text    ", relief=RAISED, command=self.win.destroy)
-        button_exit.grid(row=48, column=1, rowspan=1, columnspan=1, sticky=EW)
         button_hide_frame_left= Button(self.frame_left, text="\N{LEFTWARDS ARROW}- Hide menu", command=self.hide_frame_left)
+
+        button_search.grid(row=4, column=1, rowspan=1, sticky=EW)
+        self.entry_search.grid(row=4, column=0, rowspan=1, sticky=EW)
+        self.entry_replace.grid(row= 5, column=0, rowspan=1, sticky=EW)
+        button_replace.grid(row=5, column=1, sticky=EW)
+        button_replaceall.grid(row=6, column=1, rowspan=1, sticky=EW)
+        sep1.grid(row=7, column=0, rowspan=1, columnspan=2, sticky=EW)
+        labels_space.grid(row= 9, sticky=EW)
+        sep2.grid(row=45, column=0, columnspan=2, rowspan=1, sticky=EW)
+        button_info.grid(row=46, column=1, sticky=EW)
+        button_saveexit.grid(row=47, column=1, sticky=EW)
+        button_exit.grid(row=48, column=1, rowspan=1, columnspan=1, sticky=EW)
         button_hide_frame_left.grid(row=49, column=0, sticky=W)
+        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NS ,padx=2, pady=5)
+
 
         #Text-box and its scrollbar in column 1 and 2
         self.text_box = Text(self.win, bg="white", undo=True, maxundo=-1, font="Helvetica")
-        self.text_box.grid(row=0, column=1, rowspan=10, sticky=NSEW, padx=0)
-
         scroll_bar = Scrollbar(self.win, orient="vertical")
+
+        self.text_box.grid(row=0, column=1, rowspan=10, sticky=NSEW, padx=0)
         scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS, padx=0)
+
         self.text_box.config(yscrollcommand = scroll_bar.set)
         scroll_bar.config(command=self.text_box.yview)
 
@@ -296,7 +300,7 @@ class AppTextPad():
         tools.add_separator()
         tools.add_command(label="Erase", command=None)
 
-        #the functions for fontsize-adjustment are defined inside the menu to avoid extra place
+        #the methods for fontsize-adjustment are defined inside the menu to avoid extra place
         size = Menu(menubar, tearoff=0)
         menubar.add_cascade(menu=size, label="SIZE")
         size.add_command(label="0.5x", command=lambda: self.text_box.config(font=("Helvetica",10)))
@@ -334,32 +338,32 @@ class AppTextPad():
         self.menu_popup.add_command(label="Archive", command=lambda: self.archive())
         self.text_box.bind("<Button-3>", self.do_popup)
 
-
-    #function of popup with right-click on text_box
+    #Methods of pupup menu for text-pad are below until Canvas to avoid many methods together
+    #Method of popup with right-click on text_box
     def do_popup(self, event):
         try:
             self.menu_popup.tk_popup(event.x_root, event.y_root, 0)
         finally:
             self.menu_popup.grab_release()
 
-    #function to copy selected text
+    #Method to copy selected text
     def copy(self):
         if self.text_box.selection_get():
             self.data= self.text_box.selection_get()
         #e.bind("<Control-c>")
 
-    #function to cut selected text
+    #Method to cut selected text
     def cut(self):
         if self.text_box.selection_get():
             self.data= self.text_box.selection_get()
             self.text_box.delete("sel.first", "sel.last")
         #text_box.bind("<Control+x>")
 
-    #function to paste selected text
+    #Method to paste selected text
     def paste(self):
         self.text_box.insert(END, self.data)
 
-    #function to archive selected text for later use. This is connected with show-archive butten
+    #Method to archive selected text for later use. This is connected with show-archive butten
     def archive(self):
         if self.text_box.selection_get():
             word= self.text_box.selection_get()
@@ -374,23 +378,67 @@ class AppTextPad():
                     f.write(word)
 
 
-    """Canvas code beside the Text_box"""
+    """Canvas code beside the Text_box. the methods belonging to Canvas
+    are below it to avoid many confusion of many methods within text_pad"""
+                        
+    def canvas(self):
+        #all labels, buttons and scales on the pad
+        self.frame_canvas= LabelFrame(self.master, text= "Write or paint on the pad")
+        self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
-    #function to change pen-color
+        self.c = Canvas(self.frame_canvas, bg="white", height=580)
+        self.c.pack(side=TOP , expand=True, fill=BOTH)
+
+        #all buttons, scale in a labelframe
+        frame_all_butts= LabelFrame(self.frame_canvas)
+        label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.save_image_as)
+        label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
+        scale_control = ttk.Scale(frame_all_butts, from_=5, to=100,  command= self.brush_size_change)
+        scale_control.set(self.brush_width)
+
+        button_brush_color= Button(frame_all_butts, text="Brush Color ", command=self.brushcolor)
+        button_bg_color= Button(frame_all_butts, text="BG Color   ", relief=SUNKEN, command=self.background_color)
+        button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=self.clear_canvas)
+        button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
+        hide_show_butt_canvas= Button(frame_all_butts, text="Hide Pad -\N{RIGHTWARDS ARROW}", command=self.hide_frame_canvas)
+
+        frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH, padx=5, pady=5)
+        label_import_img.grid(row=0, column=0, sticky=W, pady=5)
+        label_control.grid(row=0, column=1, pady=5)
+        scale_control.grid(row=0, column=2, sticky=E, pady=5)
+        button_brush_color.grid(row= 1, column=0, sticky=W)
+        button_bg_color.grid(row=1, column=1)
+        button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
+        button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW, pady=5)
+        hide_show_butt_canvas.grid(row=3, column=2, sticky=E, pady=5)
+
+        self.c.bind("<B1-Motion>", self.paint)
+        self.c.bind("<ButtonRelease-1>", self.reset)
+
+        #canvas popup-menu separately from textbox menu
+        self.canvas_popup = Menu(self.c, tearoff=0)
+        self.canvas_popup.add_command(label="Push into text", command=self.push_img_into_text)
+        self.canvas_popup.add_command(label="import imgae", command=self.import_img)
+        self.canvas_popup.add_command(label="Save image", command=self.save_image_as)
+        self.canvas_popup.add_command(label="clear Pad", command=self.clear_canvas)
+        self.canvas_popup.add_command(label="Exit Pad", command=self.c.destroy)
+        self.c.bind("<Button-3>", self.do_canvas_popup)
+
+    #Method to change pen-color
     def brushcolor(self):
         color = askcolor()[1]
         self.brush_color = color
 
-    #function to change background-color of the pad
+    #Method to change background-color of the pad
     def background_color(self):
         color = askcolor()[1]
         self.c["bg"] = color
 
-    #function to change the size of the pen
+    #Method to change the size of the pen
     def brush_size_change(self, width):
         self.brush_width= width
 
-    #function to paint on the pad
+    #Method to paint on the pad
     def paint(self, e):
         if self.old_x and self.old_y:
             self.c.create_line(self.old_x, self.old_y, e.x, e.y, width= self.brush_width, fill=self.brush_color, capstyle="round")
@@ -398,17 +446,17 @@ class AppTextPad():
         self.old_x = e.x
         self.old_y = e.y
 
-    #function, which resets the pad as soon as you finish a line
+    #Method, which resets the pad as soon as you finish a line
     def reset(self, e):
         e.x = None
         e.y = None
         self.old_x, self.old_y = None, None
 
-    #function to erase the pad
+    #Method to erase the pad
     def clear_canvas(self):
         self.c.delete(ALL)
 
-    #push image from canvas into the text
+    #Method push image from canvas into the text
     def push_img_into_text(self, file_name="push"):
         self.c.postscript(file=f"{file_name}.ps", colormode="color")
         process = subprocess.Popen(["ps2pdf", f"{file_name}.ps", "sth.pdf"], shell=True)
@@ -419,7 +467,7 @@ class AppTextPad():
         self.text_box.image= img
         self.text_box.insert(END, "\n")
 
-    #a pop-up window to insert the file-name. it will bind with creat_img function.
+    #Method of a pop-up window to insert the file-name. it will bind with creat_img function.
     def save_image_as(self):
         self.win_save_as = Tk()
         self.win_save_as.title("Enter file-name")
@@ -428,7 +476,7 @@ class AppTextPad():
         button_save_as= Button(self.win_save_as,text="Save", command=self.creat_img)
         button_save_as.grid(row=0, column=1)
 
-    #function to save the image as .ps
+    #Method to save the image as .ps
     def create_img(self, file_name="temp"):
         file_name= self.entry_save_as.get()
         self.c.postscript(file=f"{file_name}.ps", colormode="color")
@@ -436,7 +484,7 @@ class AppTextPad():
         process.wait(1)
         self.win_save_as.destroy()
 
-    #method of importing image
+    #Method of importing image
     def import_img(self):
         path = askopenfilename(defaultextension=".jpg", filetypes=[("All Files", "*.*"), ("PS Files", ".ps")])
         if path:
@@ -459,50 +507,7 @@ class AppTextPad():
 
     def show_frame_canvas(self):
         self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
-                        
-    
-    def canvas(self):
-        #all labels, buttons and scales on the pad
-        self.frame_canvas= LabelFrame(self.master, text= "Write or paint on the pad")
-        self.frame_canvas.pack(side=RIGHT, fill=BOTH, expand=True)
 
-        self.c = Canvas(self.frame_canvas, bg="white", height=580)
-        self.c.pack(side=TOP , expand=True, fill=BOTH)
-
-        #all buttons, scale in a labelframe
-        frame_all_butts= LabelFrame(self.frame_canvas)
-        frame_all_butts.pack(side=BOTTOM, expand=True, fill=BOTH, padx=5, pady=5)
-
-        label_import_img= Button(frame_all_butts, text="Save Photo", relief=RAISED, command=self.save_image_as)
-        label_import_img.grid(row=0, column=0, sticky=W, pady=5)
-        label_control = Label(frame_all_butts, width=15, text="Pen Width \N{RIGHTWARDS ARROW}")
-        label_control.grid(row=0, column=1, pady=5)
-        scale_control = ttk.Scale(frame_all_butts, from_=5, to=100,  command= self.brush_size_change)
-        scale_control.set(self.brush_width)
-        scale_control.grid(row=0, column=2, sticky=E, pady=5)
-
-        button_brush_color= Button(frame_all_butts, text="Brush Color ", command=self.brushcolor)
-        button_brush_color.grid(row= 1, column=0, sticky=W)
-        button_bg_color= Button(frame_all_butts, text="BG Color   ", relief=SUNKEN, command=self.background_color)
-        button_bg_color.grid(row=1, column=1)
-        button_canvas_clear = Button(frame_all_butts, text="Clear Pad    ", relief=FLAT, command=self.clear_canvas)
-        button_canvas_clear.grid(row=1 ,column=2 ,sticky=E)
-        button_canvas_into_text= Button(frame_all_butts, text="\N{LEFTWARDS ARROW}--- Push image into text", command=self.push_img_into_text)
-        button_canvas_into_text.grid(row=2, columnspan=3, sticky=EW, pady=5)
-        hide_show_butt_canvas= Button(frame_all_butts, text="Hide Pad -\N{RIGHTWARDS ARROW}", command=self.hide_frame_canvas)
-        hide_show_butt_canvas.grid(row=3, column=2, sticky=E, pady=5)
-
-        self.c.bind("<B1-Motion>", self.paint)
-        self.c.bind("<ButtonRelease-1>", self.reset)
-
-        #canvas popup-menu separately from textbox menu
-        self.canvas_popup = Menu(self.c, tearoff=0)
-        self.canvas_popup.add_command(label="Push into text", command=self.push_img_into_text)
-        self.canvas_popup.add_command(label="import imgae", command=self.import_img)
-        self.canvas_popup.add_command(label="Save image", command=self.save_image_as)
-        self.canvas_popup.add_command(label="clear Pad", command=self.clear_canvas)
-        self.canvas_popup.add_command(label="Exit Pad", command=self.c.destroy)
-        self.c.bind("<Button-3>", self.do_canvas_popup)
 
 if __name__ == "__main__":
     root = Tk()
