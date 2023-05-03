@@ -213,50 +213,54 @@ class AppTextPad():
             
     def window_main(self):
         #code of the main window
-        self.win= LabelFrame(self.master)
+        self.win= Frame(self.master)
         self.win.pack(side=LEFT, fill=BOTH, expand=True)
         self.win.rowconfigure([0,1,2,3,4,5,6,7,8,9], weight=1, minsize=1)
         self.win.columnconfigure([0,1,2], weight=1, minsize=5)
 
-        self.text_box = Text(self.win, width=100, height=40, bg="white", undo=True, maxundo=-1, font="Helvetica")
-        self.text_box.grid(row=0, column=1, rowspan=10, sticky="nsew")
-
-        scroll_bar = Scrollbar(self.win, orient="vertical")
-        scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS)
-        self.text_box.config(yscrollcommand = scroll_bar.set)
-        scroll_bar.config(command=self.text_box.yview)
-
-        #LabelFrame for all buttons and entries in left-menu
-        self.frame_left= LabelFrame(self.win, width=35)
-        self.frame_left.grid(row=0, column=0, rowspan=10, sticky=NS)
+        #LabelFrame for all buttons and entries in left-menu, in column 0
+        self.frame_left= LabelFrame(self.win, width=30)
+        self.frame_left.rowconfigure([0,1,2,3,4,5,6,7,8,9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19], weight=1, minsize=1)
+        self.frame_left.grid(row=0, column=0, rowspan=20, columnspan=1, sticky=NSEW)
         #Buttons and Entries within frame_left
-        self.entry_search= Entry(self.frame_left, width=20)
-        self.entry_search.grid(row=1, column=0, rowspan=1, sticky="w")
+        self.entry_search= Entry(self.frame_left, width=17)
+        self.entry_search.grid(row=4, column=0, rowspan=1, sticky=EW)
         button_search= Button(self.frame_left, text="Search ", relief=GROOVE, command=self.search)
-        button_search.grid(row=1, column=0, rowspan=1, sticky="e")
+        button_search.grid(row=4, column=1, rowspan=1, sticky=EW)
 
-        self.entry_replace = Entry(self.frame_left, width=20)
-        self.entry_replace.grid(row= 2, column=0, rowspan=1, sticky="w")
+        self.entry_replace = Entry(self.frame_left, width=17)
+        self.entry_replace.grid(row= 5, column=0, rowspan=1, sticky=EW)
         button_replace= Button(self.frame_left, text="Replace", command=self.replace)
-        button_replace.grid(row=2, column=0, sticky=E)
+        button_replace.grid(row=5, column=1, sticky=EW)
         button_replaceall= Button(self.frame_left, text="Rep. All ", relief=GROOVE, command=self.replaceall)
-        button_replaceall.grid(row=3, column=0, rowspan=1, sticky=NE)
+        button_replaceall.grid(row=6, column=1, rowspan=1, sticky=EW)
 
         sep1= ttk.Separator(self.frame_left, orient="horizontal")
-        sep1.grid(row=3, column=0, rowspan=1, columnspan=1, sticky=EW)
+        sep1.grid(row=7, column=0, rowspan=1, columnspan=2, sticky=EW)
 
         #button_archive= Button(win, text="Show Archive", command=open_new_win)
         #button_archive.grid(row=5, column=0, sticky=EW)
 
         sep2= ttk.Separator(self.frame_left, orient="horizontal")
-        sep2.grid(row=7, column=0, columnspan=1, rowspan=1, sticky=EW)
+        sep2.grid(row=15, column=0, columnspan=2, rowspan=1, sticky=EW)
 
         button_info = Button(self.frame_left, text="About         ", relief=RAISED, command=self.message_box)
-        button_info.grid(row=8, column=0, sticky="ne")
+        button_info.grid(row=16, column=1, sticky=EW)
         button_saveexit = Button(self.frame_left, text="Save & Exit", relief=RAISED, command=self.save_and_exit)
-        button_saveexit.grid(row=8, column=0, sticky="se")
-        button_exit=Button(self.frame_left, text="Exit Text    ", relief=RAISED, command=self.win.destroy)
-        button_exit.grid(row=9, column=0, rowspan=3, columnspan=1, sticky="se")
+        button_saveexit.grid(row=17, column=1, sticky=EW)
+        button_exit=Button(self.frame_left, text="Hide Text    ", relief=RAISED, command=self.win.destroy)
+        button_exit.grid(row=18, column=1, rowspan=1, columnspan=1, sticky=EW)
+        button_hide_frame_left= Button(self.frame_left, text="\N{LEFTWARDS ARROW}- Hide menu")
+        button_hide_frame_left.grid(row=19, column=0, sticky=W)
+
+        #Text-box and its scrollbar in column 1 and 2
+        self.text_box = Text(self.win, bg="white", undo=True, maxundo=-1, font="Helvetica")
+        self.text_box.grid(row=0, column=1, rowspan=10, sticky=NSEW)
+
+        scroll_bar = Scrollbar(self.win, orient="vertical")
+        scroll_bar.grid(row=0, column=2, rowspan=10, sticky=NS)
+        self.text_box.config(yscrollcommand = scroll_bar.set)
+        scroll_bar.config(command=self.text_box.yview)
 
         menubar = Menu(self.win)
         root.config(menu=menubar)
