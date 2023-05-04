@@ -16,7 +16,8 @@ class AppTextPad():
         self.brush_color = "black"
         self.old_x = None
         self.old_y = None
-        self.coords = []
+        self.count = 0
+        self.img_dict= {}
         self.window_main()
         self.canvas()
 
@@ -458,14 +459,17 @@ class AppTextPad():
 
     #Method push image from canvas into the text
     def push_img_into_text(self, file_name="push"):
-        self.c.postscript(file=f"{file_name}.ps", colormode="color")
-        process = subprocess.Popen(["ps2pdf", f"{file_name}.ps", "sth.pdf"], shell=True)
+        self.c.postscript(file=f"{file_name}{self.count}.ps", colormode="color")
+        process = subprocess.Popen(["ps2pdf", f"{file_name}{self.count}.ps", "sth.pdf"], shell=True)
         process.wait(1)
-        img = ImageTk.PhotoImage(Image.open(f"{file_name}.ps"))
+        img = ImageTk.PhotoImage(Image.open(f"{file_name}{self.count}.ps"))
         self.text_box.insert(END, "\n")
         self.text_box.image_create(END, image= img)
-        self.text_box.image= img
+        #collecting the images in a dictionary
+        if self.count not in self.img_dict:
+            self.img_dict[f"{file_name}{self.count}"] = img
         self.text_box.insert(END, "\n")
+        self.count +=1
 
     #Method of a pop-up window to insert the file-name. it will bind with creat_img function.
     def save_image_as(self):
